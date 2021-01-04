@@ -8,7 +8,13 @@ import BusinessCenterIcon from "@material-ui/icons/BusinessCenter";
 import ChatIcon from "@material-ui/icons/Chat";
 import NotificationsIcon from "@material-ui/icons/Notifications";
 
+import { useSelector } from "react-redux";
+import { selectUser } from "../features/userSlice";
+
 function Header() {
+	const user = useSelector(selectUser);
+
+	console.log(user);
 	return (
 		<div className="header">
 			<div className="header__left">
@@ -22,17 +28,22 @@ function Header() {
 				</div>
 			</div>
 
-			<div className="header__right">
-				<HeaderOption Icon={HomeIcon} title="Home" />
-				<HeaderOption Icon={SupervisorAccountIcon} title="My Network" />
-				<HeaderOption Icon={BusinessCenterIcon} title="Jobs" />
-				<HeaderOption Icon={ChatIcon} title="Messaging" />
-				<HeaderOption Icon={NotificationsIcon} title="Notifications" />
-				<HeaderOption
-					avatar="https://www.flaticon.com/svg/static/icons/svg/149/149071.svg"
-					title="me"
-				/>
-			</div>
+			{user && (
+				<div className="header__right">
+					<HeaderOption Icon={HomeIcon} title="Home" />
+					<HeaderOption
+						Icon={SupervisorAccountIcon}
+						title="My Network"
+					/>
+					<HeaderOption Icon={BusinessCenterIcon} title="Jobs" />
+					<HeaderOption Icon={ChatIcon} title="Messaging" />
+					<HeaderOption
+						Icon={NotificationsIcon}
+						title="Notifications"
+					/>
+					<HeaderOption avatar={user.photoUrl} title="Me" />
+				</div>
+			)}
 		</div>
 	);
 }

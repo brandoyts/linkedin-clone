@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "../assets/css/Feed.css";
 import CreateIcon from "@material-ui/icons/Create";
 import InputOption from "./InputOption";
@@ -7,34 +7,56 @@ import SubscriptionsIcon from "@material-ui/icons/Subscriptions";
 import EventNoteIcon from "@material-ui/icons/EventNote";
 import CalendarViewDayIcon from "@material-ui/icons/CalendarViewDay";
 import Post from "./Post";
+import { db } from "../firebase";
+import firebase from "firebase";
 
 function Feed() {
-	const [posts, setPosts] = useState([
-		{
-			name: "Brando Endona",
-			description: "test",
-			message: "this is my first post ",
-		},
-	]);
+	const [posts, setPosts] = useState([]);
+	const inputRef = useRef("");
 
 	const renderPosts = () => {
 		return (
 			posts.length > 0 &&
-			posts.map((post, index) => (
-				<Post
-					key={index}
-					name={post.name}
-					description={post.description}
-					message={post.message}
-				/>
-			))
+			posts.map(
+				({ id, data: { name, description, message, photoUrl } }) => (
+					<Post
+						key={id}
+						name={name}
+						description={description}
+						message={message}
+						photoUrl={photoUrl}
+					/>
+				)
+			)
 		);
 	};
 
 	const sendPost = (e) => {
 		e.preventDefault();
-		console.log("object");
+
+		db.collection("posts").add({
+			name: "Brando Endona",
+			description: "test",
+			message: inputRef.current.value,
+			photoUrl: "",
+			timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+		});
+
+		inputRef.current.value = "";
 	};
+
+	useEffect(() => {
+		db.collection("posts")
+			.orderBy("timestamp", "desc")
+			.onSnapshot((snapshot) =>
+				setPosts(
+					snapshot.docs.map((doc) => ({
+						id: doc.id,
+						data: doc.data(),
+					}))
+				)
+			);
+	}, []);
 
 	return (
 		<div className="feed">
@@ -42,7 +64,7 @@ function Feed() {
 				<div className="feed__input">
 					<CreateIcon />
 					<form onSubmit={sendPost}>
-						<input type="text" />
+						<input type="text" ref={inputRef} />
 						<button type="submit">Send</button>
 					</form>
 				</div>
