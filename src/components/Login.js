@@ -14,11 +14,13 @@ function Login() {
 
 	const dispatch = useDispatch();
 
-	const validateInputFields = () => {
-		for (let input in inputValues) {
+	const validateInputFields = (inputs) => {
+		for (let input in inputs) {
+			const value = inputValues[input];
+
 			if (input === "profilePic") {
 				continue;
-			} else if (inputValues[input] == null || inputValues[input] == "") {
+			} else if (value.length === 0) {
 				return false;
 			}
 		}
@@ -28,13 +30,34 @@ function Login() {
 
 	const handleLogin = (e) => {
 		e.preventDefault();
-		if (!validateInputFields()) return;
+
+		const fields = {
+			email: inputValues.email,
+			password: inputValues.password,
+		};
+
+		if (!validateInputFields(fields)) return;
+
+		auth.signInWithEmailAndPassword(fields.email, fields.password)
+			.then((userAuth) => {
+				dispatch(
+					login({
+						email: userAuth.user.email,
+						uid: userAuth.user.uid,
+						displayName: userAuth.user.displayName,
+						photoUrl: userAuth.user.photoUrl,
+					})
+				);
+			})
+			.catch((error) => alert(error.message));
 	};
 
 	const handleRegister = (e) => {
+		e.preventDefault();
 		if (!validateInputFields()) return;
 
 		const { fullName, profilePic, email, password } = inputValues;
+
 		auth.createUserWithEmailAndPassword(email, password)
 			.then((userAuth) => {
 				userAuth.user
@@ -84,19 +107,20 @@ function Login() {
 					onChange={handleInputChange}
 					value={inputValues.fullName}
 				/>
-				<input
-					type="email"
-					name="email"
-					placeholder="Email"
-					onChange={handleInputChange}
-					value={inputValues.email}
-				/>
+
 				<input
 					type="text"
 					name="profilePic"
 					placeholder="Profile pic URL (optional)"
 					onChange={handleInputChange}
 					value={inputValues.profilePic}
+				/>
+				<input
+					type="email"
+					name="email"
+					placeholder="Email"
+					onChange={handleInputChange}
+					value={inputValues.email}
 				/>
 				<input
 					type="password"

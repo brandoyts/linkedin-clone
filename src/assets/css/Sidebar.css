@@ -99,3 +99,19 @@
 .sidebar__hash {
 	margin: 0 10px 0 5px;
 }
+
+.sidebar__logoutBtn {
+	background-color: #0077b7;
+	color: white;
+	border: none;
+	outline: none;
+	width: 120px;
+	height: 40px;
+	font-weight: bold;
+	margin: 20px 0;
+	cursor: pointer;
+}
+
+.sidebar__logoutBtn:hover {
+	background-color: black;
+}

@@ -14,7 +14,6 @@ import { selectUser } from "../features/userSlice";
 function Header() {
 	const user = useSelector(selectUser);
 
-	console.log(user);
 	return (
 		<div className="header">
 			<div className="header__left">

@@ -1,8 +1,13 @@
 import React from "react";
 import "../assets/css/Sidebar.css";
 import { Avatar } from "@material-ui/core";
+import { selectUser, logout } from "../features/userSlice";
+import { useSelector, useDispatch } from "react-redux";
+import { auth } from "../firebase";
 
 function Sidebar() {
+	const user = useSelector(selectUser);
+	const dispatch = useDispatch();
 	const recentItem = (topic) => {
 		return (
 			<div className="sidebar__recentItem">
@@ -10,6 +15,12 @@ function Sidebar() {
 				<p>{topic}</p>
 			</div>
 		);
+	};
+
+	const handleLogout = () => {
+		auth.signOut().then(() => {
+			dispatch(logout());
+		});
 	};
 
 	return (
@@ -20,8 +31,8 @@ function Sidebar() {
 					alt=""
 				/>
 				<Avatar className="sidebar__avatar" />
-				<h2>Brando Endona</h2>
-				<h4>brando@mail.com</h4>
+				<h2>{user.displayName}</h2>
+				<h4>{user.email}</h4>
 			</div>
 
 			<div className="sidebar__stats">
@@ -33,6 +44,9 @@ function Sidebar() {
 					<p>View on post</p>
 					<p className="sidebar__statNumber">3,333</p>
 				</div>
+				<button onClick={handleLogout} className="sidebar__logoutBtn">
+					Logout
+				</button>
 			</div>
 
 			<div className="sidebar__bottom">

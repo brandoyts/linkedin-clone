@@ -6,6 +6,7 @@
 }
 
 .app__body {
+	margin-top: 50px;
 	display: flex;
 	gap: 20px;
 }
